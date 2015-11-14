@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>Bitcoin Papercraft Wallet Generator</title>
+</head>
+<body>
+    <div ng-controller="papercraftController">
+        <canvas id="canvas" style="max-width:100%;"></canvas>
+
+        <!--div>
+            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bitcoin:{{ address }}" />
+            <p>{{ address }}</p>
+        </div>
+        <br />
+        <div>
+            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ privateKey }}" />
+            <p>{{ privateKey }}</p>
+        </div-->
+    </div>
+
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/bitcore-lib/bitcore-lib.min.js"></script>
+    <script>
+        'use strict';
+
+        var app = angular.module("app", []);
+
+        app.controller("papercraftController", function($http, $scope) {
+            var Bitcore = require('bitcore-lib');
+            var privateKey = new Bitcore.PrivateKey();
+            var privateKeyWIF = privateKey.toWIF();
+            var publicKey = privateKey.publicKey;
+            var address = publicKey.toAddress().toString();
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+
+            canvas.width = 800;
+            canvas.height = 650;
+
+            var bg = new Image();
+            bg.src = "papercraft-1.png"
+
+            var qrcodeAddress = new Image();
+            qrcodeAddress.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
+
+            var qrcodePrivateKey = new Image();
+            qrcodePrivateKey.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + privateKeyWIF;
+
+            console.log(qrcodeAddress.src);
+
+            bg.onload = function() {
+                qrcodeAddress.onload = function() {
+                    qrcodePrivateKey.onload = function() {
+                        ctx.drawImage(bg, 0, 0);
+                        ctx.drawImage(qrcodeAddress, 573, 86);
+                        ctx.drawImage(qrcodePrivateKey, 100, 500);
+                    }
+                }
+            }
+
+            $scope.privateKey = privateKeyWIF;
+            $scope.address = address;
+        });
+    </script>
+</body>
+</html>
