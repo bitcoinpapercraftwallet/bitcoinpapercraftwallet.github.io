@@ -5,7 +5,7 @@
 	<title>Bitcoin Papercraft Wallet Generator</title>
     <style type="text/css">
         @media print {
-            h1, h2, .donate, .foot {
+            h1, h2, iframe, .donate, .foot {
                 display:none;
             }
         }
@@ -13,6 +13,9 @@
 </head>
 <body>
     <h1>Bitcoin Papercraft Wallet</h1>
+
+    <iframe src="//www.facebook.com/plugins/like.php?href=http://bitcoinpapercraftwallet.github.io/&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;colorscheme=light&amp;action=like&amp;height=20" allowtransparency="true" frameborder="0" scrolling="no" width="78" height="20"></iframe>
+
     <p class="donate">Donate Bitcoins: 16sHAYZRisLqSVDTsvQDDe8myE8dnRDdwX</p>
 
     <div ng-controller="walletController">
@@ -26,7 +29,7 @@
             <canvas id="canvasPrivate" style="max-width:100%;"></canvas>
         </div>
 
-        <h3>Wallet</h3>
+        <h3>Wallet Keys</h3>
         <div>
             <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=bitcoin:{{ address }}" />
             <p>{{ address }}</p>
