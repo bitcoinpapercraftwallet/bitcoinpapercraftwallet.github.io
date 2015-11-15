@@ -49,30 +49,20 @@
 
                 bg.onload = function() {
                     deferred.resolve(response.data);
+                }
                     // promise is returned
                     return deferred.promise;
-                }
             }
 
             var qrcodeAddress = new Image();
             qrcodeAddress.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
 
-            function getQRcodeAddress() {
-                var deferred = $q.defer();
-
-                qrcodeAddress.onload = function() {
-                    deferred.resolve(response.data);
-                    // promise is returned
-                    return deferred.promise;
-                }
-            }
-
-            $q.all([getPapercraft]).then(function(result) {
-                qrcodeAddress.onload = function() {
+            qrcodeAddress.onload = function() {
+                $q.all([getPapercraft]).then(function(result) {
                     ctx.drawImage(bg, 0, 0);
                     ctx.drawImage(qrcodeAddress, 573, 86);
-                }
-            });
+                });
+            }
 
             $scope.privateKey = privateKeyWIF;
             $scope.address = address;
