@@ -3,6 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bitcoin Papercraft Wallet Generator</title>
+    <style type="text/css">
+        @media print {
+            h1 {
+                display:none;
+            }
+        }
+    </style>
 </head>
 <body>
     <div ng-controller="papercraftController">
@@ -11,13 +18,13 @@
 
         <div>
             <h3>Address</h3>
-            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:{{ address }}" />
+            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=bitcoin:{{ address }}" />
             <p>{{ address }}</p>
         </div>
         <br />
         <div>
             <h3>Private Key</h3>
-            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ privateKey }}" />
+            <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ privateKey }}" />
             <p>{{ privateKey }}</p>
         </div-->
     </div>
