@@ -30,19 +30,23 @@
         var app = angular.module("app", []);
 
         app.controller("papercraftController", function($http, $scope, $q) {
-            var Bitcore = require('bitcore-lib');
-            var privateKey = new Bitcore.PrivateKey();
-            var privateKeyWIF = privateKey.toWIF();
-            var publicKey = privateKey.publicKey;
-            var address = publicKey.toAddress().toString();
-            var canvas = document.getElementById("canvas");
-            var ctx = canvas.getContext("2d");
+            var Bitcore = require('bitcore-lib')
+              , privateKey = new Bitcore.PrivateKey()
+              , privateKeyWIF = privateKey.toWIF()
+              , publicKey = privateKey.publicKey
+              , address = publicKey.toAddress().toString()
+              , canvas = document.getElementById("canvas")
+              , ctx = canvas.getContext("2d")
+              , bg = new Image()
+              , qrcodeAddress = new Image();
+
+            $scope.privateKey = privateKeyWIF;
+            $scope.address = address;
 
             canvas.width = 800;
             canvas.height = 650;
 
-            var bg = new Image();
-            bg.src = "papercraft-1.png"
+            bg.src = "papercraft-1.png";
 
             function getPapercraft() {
                 var deferred = $q.defer();
@@ -50,11 +54,10 @@
                 bg.onload = function() {
                     deferred.resolve(response.data);
                 }
-                    // promise is returned
-                    return deferred.promise;
+
+                return deferred.promise;
             }
 
-            var qrcodeAddress = new Image();
             qrcodeAddress.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
 
             qrcodeAddress.onload = function() {
@@ -63,9 +66,6 @@
                     ctx.drawImage(qrcodeAddress, 573, 86);
                 });
             }
-
-            $scope.privateKey = privateKeyWIF;
-            $scope.address = address;
         });
     </script>
 </body>
