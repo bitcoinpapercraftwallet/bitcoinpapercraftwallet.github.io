@@ -5,36 +5,44 @@
 	<title>Bitcoin Papercraft Wallet Generator</title>
     <style type="text/css">
         @media print {
-            h1, p {
+            h1, h2, .donate, .foot {
                 display:none;
             }
         }
     </style>
 </head>
 <body>
-    <div ng-controller="papercraftController">
-        <h1>Bitcoin Papercraft Wallet</h1>
-        <p>Donate Bitcoins: 16sHAYZRisLqSVDTsvQDDe8myE8dnRDdwX</p>
-        <canvas id="canvas" style="max-width:100%;"></canvas>
+    <h1>Bitcoin Papercraft Wallet</h1>
+    <p class="donate">Donate Bitcoins: 16sHAYZRisLqSVDTsvQDDe8myE8dnRDdwX</p>
+
+    <div ng-controller="walletController">
+        <div>
+            <h2>Public Address</h2>
+            <canvas id="canvasPublic" style="max-width:100%;"></canvas>
+        </div>
 
         <div>
-            <h3>Address</h3>
+            <h2>Private Key</h2>
+            <canvas id="canvasPrivate" style="max-width:100%;"></canvas>
+        </div>
+
+        <h3>Wallet</h3>
+        <div>
             <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=bitcoin:{{ address }}" />
             <p>{{ address }}</p>
         </div>
-        <br />
+
         <div>
-            <h3>Private Key</h3>
             <img ng-src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ privateKey }}" />
             <p>{{ privateKey }}</p>
         </div>
-
-        <!-- .foot -->
-        <footer class="foot">
-            Powered by <a href="http://bitcore.io/">Bitcore</a>
-        </footer>
-        <!-- /.foot -->
     </div>
+
+    <!-- .foot -->
+    <footer class="foot">
+        Powered by <a href="http://bitcore.io/">Bitcore</a>
+    </footer>
+    <!-- /.foot -->
 
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/bitcore-lib/bitcore-lib.min.js"></script>
@@ -43,43 +51,58 @@
 
         var app = angular.module("app", []);
 
-        app.controller("papercraftController", function($http, $scope, $q) {
+        app.controller("walletController", function($http, $scope, $q) {
             var Bitcore = require('bitcore-lib')
               , privateKey = new Bitcore.PrivateKey()
               , privateKeyWIF = privateKey.toWIF()
               , publicKey = privateKey.publicKey
-              , address = publicKey.toAddress().toString()
-              , canvas = document.getElementById("canvas")
-              , ctx = canvas.getContext("2d")
-              , bg = new Image()
-              , qrcodeAddress = new Image();
+              , address = publicKey.toAddress().toString();
+
+            console.log(address);
+            console.log(privateKeyWIF);
 
             $scope.privateKey = privateKeyWIF;
             $scope.address = address;
 
-            canvas.width = 800;
-            canvas.height = 650;
+            function makePapercraft(canvas, background, key) {
+                var canvas = document.getElementById(canvas)
+                  , ctx = canvas.getContext("2d")
+                  , bg = new Image()
+                  , qrcode = new Image();
 
-            bg.src = "papercraft-1.png";
+                key = key || false;
 
-            function getPapercraft() {
-                var deferred = $q.defer();
+                canvas.width = 800;
+                canvas.height = 650;
 
-                bg.onload = function() {
-                    deferred.resolve(response.data);
+                bg.src = background;
+
+                function getPapercraft() {
+                    var deferred = $q.defer();
+
+                    bg.onload = function() {
+                        deferred.resolve(response.data);
+                    }
+
+                    return deferred.promise;
                 }
 
-                return deferred.promise;
+                if (key === true) {
+                    qrcode.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
+                } else {
+                    qrcode.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + privateKeyWIF;
+                }
+
+                qrcode.onload = function() {
+                    $q.all([getPapercraft]).then(function(result) {
+                        ctx.drawImage(bg, 0, 0);
+                        ctx.drawImage(qrcode, 573, 86);
+                    });
+                }
             }
 
-            qrcodeAddress.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
-
-            qrcodeAddress.onload = function() {
-                $q.all([getPapercraft]).then(function(result) {
-                    ctx.drawImage(bg, 0, 0);
-                    ctx.drawImage(qrcodeAddress, 573, 86);
-                });
-            }
+            makePapercraft("canvasPublic", "papercraft-1-public.png", true);
+            makePapercraft("canvasPrivate", "papercraft-1-private.png");
         });
     </script>
 </body>
