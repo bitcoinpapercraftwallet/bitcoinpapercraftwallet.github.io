@@ -96,12 +96,12 @@
                     qrcode.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + privateKeyWIF;
                 }
 
-                qrcode.onload = function() {
-                    $q.all([getPapercraft]).then(function(result) {
+                $q.all([getPapercraft]).then(function(result) {
+                    qrcode.onload = function() {
                         ctx.drawImage(bg, 0, 0);
                         ctx.drawImage(qrcode, 573, 86);
-                    });
-                }
+                    }
+                });
             }
 
             makePapercraft("canvasPublic", "papercraft-1-public.png", true);
