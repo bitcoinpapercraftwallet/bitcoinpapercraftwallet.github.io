@@ -80,28 +80,19 @@
 
                 bg.src = background;
 
-                function getPapercraft() {
-                    var deferred = $q.defer();
-
-                    bg.onload = function() {
-                        deferred.resolve(response.data);
-                    }
-
-                    return deferred.promise;
-                }
-
                 if (key === true) {
                     qrcode.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=bitcoin:" + address;
                 } else {
                     qrcode.src = "http://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + privateKeyWIF;
                 }
 
-                $q.all([getPapercraft]).then(function(result) {
-                    qrcode.onload = function() {
-                        ctx.drawImage(bg, 0, 0);
-                        ctx.drawImage(qrcode, 573, 86);
-                    }
-                });
+                bg.onload = function() {
+                    ctx.drawImage(bg, 0, 0);
+                }
+
+                qrcode.onload = function() {
+                    ctx.drawImage(qrcode, 573, 86);
+                }
             }
 
             makePapercraft("canvasPublic", "papercraft-1-public.png", true);
